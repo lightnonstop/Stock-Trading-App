@@ -1,6 +1,8 @@
-import React from 'react'
+import React from 'react';
+import { useState } from 'react';
 import Chart from 'react-apexcharts';
 const StockChart = ({chartData, symbol}) => {
+    const [dateFormat, setDateFormat] = useState('24h');
     const {day, week, year} = chartData;
     const options = {
         title: {
@@ -28,15 +30,38 @@ const StockChart = ({chartData, symbol}) => {
             }
         }
     }
+    const determineTimeFormat = () => {
+        switch(dateFormat){
+            case '24h':
+                return day
+            case '7d':
+                return week
+            case '1y':
+                return year
+            default:
+                return day
+        }
+    }
     const series = [
         {
             name: symbol,
-            data: day
+            data: determineTimeFormat()
         }
     ]
+    const renderButtonSelect = button => {
+        const classes = 'btn m-1'
+        if (button === dateFormat){
+            return classes + 'btn-primary'
+        } else {
+            return classes + 'btn-outline-primary'
+        }
+    }
   return (
     <div className='mt-5 mb-5 p-4 shadow-sm bg-white'>
-        <Chart options={options} series={series} type='area' width='100%'/>      
+        <Chart options={options} series={series} type='area' width='100%'/>
+        <button className={renderButtonSelect('24h')} onClick={() => setDateFormat('24h')}>24h</button>
+        <button className={renderButtonSelect('7d')} onClick={() => setDateFormat('7d')}>7d</button>
+        <button className={renderButtonSelect('1y')} onClick={() => setDateFormat('1y')}>1y</button>
     </div>
   )
 }
